@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Học tập và Kỹ năng số</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CẤU HÌNH BIẾN MÀU SẮC & PHÔNG CHỮ --- */
+        :root {
+            --primary-gold: #d4af37;
+            --light-gold: #f3e5ab;
+            --dark-gold: #aa7c11;
+            --bg-dark: #0d0d0d;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(212, 175, 55, 0.15);
+            --text-light: #f5f5f5;
+            --text-muted: #cccccc;
+            --font-title: 'Cinzel', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- BACKGROUND ĐỘNG: LỤA MỀM MẠI & HẠT LẤP LÁNH --- */
+        .bg-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        /* Hiệu ứng mô phỏng các dải lụa vàng uốn lượn */
+        .silk-wave {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at 30% 30%, rgba(214, 175, 55, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 80%, rgba(170, 124, 17, 0.04) 0%, transparent 50%);
+            animation: waveMotion 25s ease-in-out infinite alternate;
+        }
+
+        @keyframes waveMotion {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.1) translateY(-30px); }
+            100% { transform: rotate(-5deg) scale(0.9) translateX(30px); }
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- THANH ĐIỀU HƯỚNG (NAVBAR) --- */
+        navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--card-border);
+            z-index: 1000;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: var(--font-title);
+            color: var(--primary-gold);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-gold);
+            text-shadow: 0 0 8px rgba(214,175,55,0.4);
+        }
+
+        .admin-status-btn {
+            background: linear-gradient(135deg, var(--dark-gold), var(--primary-gold));
+            color: #000 !important;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .menu-toggle {
+            display: none;
+            color: var(--primary-gold);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* --- THIẾT KẾ CARD & LAYOUT CHUNG --- */
+        section {
+            padding: 100px 8% 60px 8%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-title {
+            font-family: var(--font-title);
+            color: var(--primary-gold);
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 3px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 1px;
+            background: var(--primary-gold);
+            margin: 15px auto 0 auto;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 35px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.4s ease, border 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.35);
+        }
+
+        /* --- TRANG CHỦ --- */
+        #trang-chu {
+            text-align: center;
+            align-items: center;
+        }
+
+        .hero-name {
+            font-family: var(--font-title);
+            font-size: 3.5rem;
+            color: #fff;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .hero-tag {
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+            font-family: var(--font-title);
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .hero-desc {
+            max-width: 700px;
+            color: var(--text-muted);
+            font-weight: 300;
+            font-size: 1.1rem;
+        }
+
+        /* --- GIỚI THIỆU --- */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .info-item {
+            margin-bottom: 20px;
+        }
+
+        .info-item strong {
+            color: var(--primary-gold);
+            font-family: var(--font-title);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* --- MỤC TIÊU --- */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .goals-grid h3 {
+            font-family: var(--font-title);
+            color: var(--primary-gold);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .goals-grid ul {
+            list-style-position: inside;
+            color: var(--text-muted);
+        }
+
+        .goals-grid li {
+            margin-bottom: 10px;
+        }
+
+        /* --- BÀI TẬP --- */
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .exercise-card h3 {
+            font-family: var(--font-title);
+            color: var(--primary-gold);
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(214,175,55,0.1);
+            padding-bottom: 10px;
+        }
+
+        .ex-item {
+            margin-bottom: 15px;
+        }
+
+        .ex-item span {
+            color: var(--primary-gold);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        .evidence-box {
+            margin-top: 20px;
+            border: 1px dashed var(--card-border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .evidence-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* --- CẢM NHẬN --- */
+        .reflection-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .reflection-container i {
+            color: var(--primary-gold);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        /* --- LIÊN HỆ --- */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .contact-card i {
+            font-size: 2rem;
+            color: var(--primary-gold);
+            margin-bottom: 15px;
+        }
+
+        .contact-card a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .contact-card a:hover {
+            color: var(--primary-gold);
+        }
+
+        /* --- HỆ THỐNG QUẢN TRỊ (ADMIN PANEL UI) --- */
+        .admin-controls {
+            display: none; /* Ẩn mặc định, chỉ hiện khi đăng nhập */
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(214,175,55,0.3);
+        }
+
+        body.is-admin .admin-controls {
+            display: block;
+        }
+
+        .btn-admin {
+            background: transparent;
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .btn-admin:hover {
+            background: var(--primary-gold);
+            color: #000;
+        }
+
+        /* Form Nhập Liệu Ẩn */
+        .edit-form {
+            display: none;
+            margin-top: 10px;
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .edit-form input, .edit-form textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-family: var(--font-body);
+        }
+
+        .edit-form button {
+            background: var(--primary-gold);
+            color: #000;
+            border: none;
+            padding: 6px 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Khóa Upload khi chưa login */
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* --- DIỆN MẠO MODAL ĐĂNG NHẬP --- */
+        #admin-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--card-border);
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--dark-gold), var(--primary-gold));
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        /* --- ANIMATION KHI XUẤT HIỆN --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .intro-grid, .goals-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-name { font-size: 2.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #0d0d0d;
+                flex-direction: column;
+                padding: 20px;
+                border-bottom: 1px solid var(--card-border);
+            }
+            .nav-links.open { display: flex; }
+            .menu-toggle { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas-container">
+        <div class="silk-wave"></div>
+        <canvas id="sparklesCanvas"></canvas>
+    </div>
+
+    <navbar>
+        <a href="#trang-chu" class="nav-logo" id="site-title-nav">Portfolio</a>
+        <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#trang-chu" class="active">Trang chủ</a></li>
+            <li><a href="#gioi-thieu">Giới thiệu</a></li>
+            <li><a href="#muc-tieu">Mục tiêu</a></li>
+            <li><a href="#bai-tap">Bài tập</a></li>
+            <li><a href="#cam-nhan">Cảm nhận</a></li>
+            <li><a href="#lien-he">Liên hệ</a></li>
+            <li><a href="#admin" id="adminStatusBtn" class="admin-status-btn">Admin</a></li>
+        </ul>
+    </navbar>
+
+    <section id="trang-chu">
+        <div class="reveal active">
+            <h1 class="hero-name" id="txt-student-name">Nguyễn Văn A</h1>
+            <p class="hero-tag" id="txt-site-title">Portfolio Học tập và Kỹ năng số</p>
+            <p class="hero-desc glass-card" id="txt-hero-desc">
+                "Portfolio này tổng hợp các sản phẩm học tập, kỹ năng số và ứng dụng AI trong học tập được thực hiện trong suốt học phần."
+            </p>
+            <div class="admin-controls">
+                <button class="btn-admin" onclick="openEditForm('hero')"><i class="fas fa-edit"></i> Sửa Trang Chủ</button>
+                <div id="form-hero" class="edit-form">
+                    <input type="text" id="input-student-name" placeholder="Họ tên sinh viên">
+                    <input type="text" id="input-site-title" placeholder="Tên Website">
+                    <textarea id="input-hero-desc" rows="3" placeholder="Mô tả ngắn"></textarea>
+                    <button onclick="saveHero()">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gioi-thieu" class="reveal">
+        <h2 class="section-title">Giới thiệu bản thân</h2>
+        <div class="intro-grid glass-card">
+            <div>
+                <div class="info-item">
+                    <strong>Ngành học</strong>
+                    <p id="txt-major">Công nghệ thông tin / Hệ thống thông tin</p>
+                </div>
+                <div class="info-item">
+                    <strong>Sở thích</strong>
+                    <p id="txt-hobbies">Nghiên cứu công nghệ mới, đọc sách chuyên ngành, ứng dụng công cụ AI tăng hiệu suất.</p>
+                </div>
+                <div class="info-item">
+                    <strong>Định hướng nghề nghiệp</strong>
+                    <p id="txt-career">Trở thành một chuyên viên Phân tích dữ liệu hoặc Chuyên gia giải pháp AI ứng dụng doanh nghiệp.</p>
+                </div>
+            </div>
+            <div>
+                <div class="info-item">
+                    <strong>Mục tiêu phát triển kỹ năng số & AI</strong>
+                    <p id="txt-ai-target">Làm chủ các công cụ hỗ trợ thông minh, tối ưu hóa quy trình học thuật, nâng cao tư duy prompt và bảo vệ an toàn thông tin cá nhân trên không gian mạng.</p>
+                </div>
+            </div>
+        </div>
+        <div class="admin-controls" style="text-align: center; margin-top:20px;">
+            <button class="btn-admin" onclick="openEditForm('intro')"><i class="fas fa-edit"></i> Sửa thông tin cá nhân</button>
+            <div id="form-intro" class="edit-form" style="max-width: 600px; margin: 10px auto; text-align: left;">
+                <input type="text" id="input-major" placeholder="Ngành học">
+                <textarea id="input-hobbies" placeholder="Sở thích"></textarea>
+                <textarea id="input-career" placeholder="Định hướng nghề nghiệp"></textarea>
+                <textarea id="input-ai-target" placeholder="Mục tiêu Kỹ năng số & AI"></textarea>
+                <button onclick="saveIntro()">Lưu</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="muc-tieu" class="reveal">
+        <h2 class="section-title">Mục tiêu Portfolio</h2>
+        <div class="goals-grid">
+            <div class="glass-card">
+                <h3><i class="fas fa-award"></i> Xây dựng thương hiệu cá nhân</h3>
+                <ul>
+                    <li>Thể hiện năng lực học tập rõ ràng.</li>
+                    <li>Lưu trữ sản phẩm khoa học đã thực hiện.</li>
+                    <li>Xây dựng hồ sơ học tập chuyên nghiệp, hiện đại.</li>
+                </ul>
+            </div>
+            <div class="glass-card">
+                <h3><i class="fas fa-brain"></i> Tổng hợp kiến thức và kỹ năng</h3>
+                <ul>
+                    <li>Tập hợp toàn bộ kết quả học tập thực chất.</li>
+                    <li>Thể hiện rõ nét quá trình phát triển kỹ năng số qua từng tuần.</li>
+                    <li>Ứng dụng linh hoạt AI trong học tập và nghiên cứu một cách thông minh.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="bai-tap" class="reveal">
+        <h2 class="section-title">Sản phẩm bài tập</h2>
+        <div class="exercises-grid">
+            
+            <div class="glass-card exercise-card">
+                <h3 id="title-ex1">Bài 1 - Thao tác cơ bản với tệp tin và thư mục</h3>
+                <div class="ex-item"><span>Mô tả yêu cầu:</span><p id="desc-ex1">Quản lý và đồng bộ hóa tài nguyên học tập một cách khoa học trên đám mây và máy tính cục bộ.</p></div>
+                <div class="ex-item"><span>Cấu trúc thư mục tối ưu:</span><p id="struct-ex1">Root/ Nam_Hoc_X / Hoc_Ky_Y / Ten_Mon_Hoc / Bai_Tap</p></div>
+                <div class="ex-item"><span>Quy tắc đặt tên tệp:</span><p id="rule-ex1">[MaSV]_[TenMonHoc]_[TenBaiTap]_V1.0</p></div>
+                <div class="evidence-box">
+                    <span>Ảnh minh chứng thực hiện</span>
+                    <img id="img-ex1" class="evidence-img" src="" alt="Minh chứng bài 1">
+                    <div class="admin-controls upload-btn-wrapper" style="margin-top:10px;">
+                        <button class="btn-admin">Thay ảnh minh chứng</button>
+                        <input type="file" accept="image/*" onchange="uploadEvidence(event, 'img-ex1')">
+                    </div>
+                </div>
+                <div class="admin-controls">
+                    <button class="btn-admin" onclick="openEditForm('ex1')"><i class="fas fa-edit"></i> Sửa Bài 1</button>
+                    <div id="form-ex1" class="edit-form">
+                        <input type="text" id="input-title-ex1" placeholder="Tiêu đề bài viết">
+                        <textarea id="input-desc-ex1" placeholder="Mô tả"></textarea>
+                        <textarea id="input-struct-ex1" placeholder="Cấu trúc"></textarea>
+                        <textarea id="input-rule-ex1" placeholder="Quy tắc đặt tên"></textarea>
+                        <button onclick="saveEx('ex1')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card exercise-card">
+                <h3 id="title-ex2">Bài 2 - Tìm kiếm và đánh giá thông tin học thuật</h3>
+                <div class="ex-item"><span>Quá trình tìm kiếm:</span><p id="desc-ex2">Khai thác dữ liệu qua Google Scholar, ResearchGate và thư viện số quốc gia.</p></div>
+                <div class="ex-item"><span>Toán tử nâng cao:</span><p id="struct-ex2">"AI in education" AND site:.edu OR filetype:pdf</p></div>
+                <div class="ex-item"><span>Đánh giá nguồn tin:</span><p id="rule-ex2">Sử dụng bộ tiêu chí CRAAP để kiểm định độ tin cậy của tài liệu.</p></div>
+                <div class="evidence-box">
+                    <span>Ảnh minh chứng thực hiện</span>
+                    <img id="img-ex2" class="evidence-img" src="" alt="Minh chứng bài 2">
+                    <div class="admin-controls upload-btn-wrapper" style="margin-top:10px;">
+                        <button class="btn-admin">Thay ảnh minh chứng</button>
+                        <input type="file" accept="image/*" onchange="uploadEvidence(event, 'img-ex2')">
+                    </div>
+                </div>
+                <div class="admin-controls">
+                    <button class="btn-admin" onclick="openEditForm('ex2')"><i class="fas fa-edit"></i> Sửa Bài 2</button>
+                    <div id="form-ex2" class="edit-form">
+                        <input type="text" id="input-title-ex2" placeholder="Tiêu đề bài viết">
+                        <textarea id="input-desc-ex2" placeholder="Quá trình tìm kiếm"></textarea>
+                        <textarea id="input-struct-ex2" placeholder="Toán tử nâng cao"></textarea>
+                        <textarea id="input-rule-ex2" placeholder="Đánh giá nguồn tin"></textarea>
+                        <button onclick="saveEx('ex2')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card exercise-card">
+                <h3 id="title-ex3">Bài 3 - Viết Prompt hiệu quả cho các tác vụ học tập</h3>
+                <div class="ex-item"><span>Prompt ban đầu:</span><p id="desc-ex3">"Hãy viết một bài văn về trí tuệ nhân tạo."</p></div>
+                <div class="ex-item"><span>Prompt cải tiến:</span><p id="struct-ex3">"Đóng vai là chuyên gia giáo dục, hãy phân tích tác động tích cực và rủi ro của ChatGPT đối với sinh viên đại học trong năm 2026, lập luận kèm ví dụ, độ dài 500 từ."</p></div>
+                <div class="ex-item"><span>So sánh & Bài học:</span><p id="rule-ex3">Cấu trúc rõ vai trò, bối cảnh và định dạng giúp kết quả AI chính xác tăng 80%.</p></div>
+                <div class="evidence-box">
+                    <span>Ảnh minh chứng thực hiện</span>
+                    <img id="img-ex3" class="evidence-img" src="" alt="Minh chứng bài 3">
+                    <div class="admin-controls upload-btn-wrapper" style="margin-top:10px;">
+                        <button class="btn-admin">Thay ảnh minh chứng</button>
+                        <input type="file" accept="image/*" onchange="uploadEvidence(event, 'img-ex3')">
+                    </div>
+                </div>
+                <div class="admin-controls">
+                    <button class="btn-admin" onclick="openEditForm('ex3')"><i class="fas fa-edit"></i> Sửa Bài 3</button>
+                    <div id="form-ex3" class="edit-form">
+                        <input type="text" id="input-title-ex3" placeholder="Tiêu đề">
+                        <textarea id="input-desc-ex3" placeholder="Prompt ban đầu"></textarea>
+                        <textarea id="input-struct-ex3" placeholder="Prompt cải tiến"></textarea>
+                        <textarea id="input-rule-ex3" placeholder="So sánh & bài học"></textarea>
+                        <button onclick="saveEx('ex3')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card exercise-card">
+                <h3 id="title-ex4">Bài 4 - Sử dụng công cụ hợp tác trực tuyến</h3>
+                <div class="ex-item"><span>Công cụ sử dụng:</span><p id="desc-ex4">Notion, Trello và Google Workspace để quản trị tiến độ dự án.</p></div>
+                <div class="ex-item"><span>Phân công công việc:</span><p id="struct-ex4">Sử dụng sơ đồ RACI, phân chia rõ ràng thời hạn (Deadline) và người phụ trách chính.</p></div>
+                <div class="ex-item"><span>Minh chứng nhóm:</span><p id="rule-ex4">Biên bản họp trực tuyến hàng tuần qua MS Teams và nhật ký cập nhật lịch sử mã nguồn.</p></div>
+                <div class="evidence-box">
+                    <span>Ảnh minh chứng thực hiện</span>
+                    <img id="img-ex4" class="evidence-img" src="" alt="Minh chứng bài 4">
+                    <div class="admin-controls upload-btn-wrapper" style="margin-top:10px;">
+                        <button class="btn-admin">Thay ảnh minh chứng</button>
+                        <input type="file" accept="image/*" onchange="uploadEvidence(event, 'img-ex4')">
+                    </div>
+                </div>
+                <div class="admin-controls">
+                    <button class="btn-admin" onclick="openEditForm('ex4')"><i class="fas fa-edit"></i> Sửa Bài 4</button>
+                    <div id="form-ex4" class="edit-form">
+                        <input type="text" id="input-title-ex4" placeholder="Tiêu đề">
+                        <textarea id="input-desc-ex4" placeholder="Công cụ"></textarea>
+                        <textarea id="input-struct-ex4" placeholder="Phân công"></textarea>
+                        <textarea id="input-rule-ex4" placeholder="Minh chứng"></textarea>
+                        <button onclick="saveEx('ex4')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card exercise-card">
+                <h3 id="title-ex5">Bài 5 - Sử dụng AI tạo sinh để hỗ trợ sáng tạo</h3>
+                <div class="ex-item"><span>Công cụ AI:</span><p id="desc-ex5">Midjourney tạo hình ảnh nghệ thuật, ChatGPT phát triển kịch bản nội dung truyền thông.</p></div>
+                <div class="ex-item"><span>Sản phẩm tạo ra:</span><p id="struct-ex5">Bộ Infographic và Video ngắn minh họa quy trình ứng dụng công nghệ số vào giáo dục.</p></div>
+                <div class="ex-item"><span>Đánh giá hiệu quả:</span><p id="rule-ex5">Rút ngắn thời gian lên ý tưởng thiết kế đồ họa tới 60% nhưng vẫn đảm bảo tính độc bản.</p></div>
+                <div class="evidence-box">
+                    <span>Ảnh minh chứng thực hiện</span>
+                    <img id="img-ex5" class="evidence-img" src="" alt="Minh chứng bài 5">
+                    <div class="admin-controls upload-btn-wrapper" style="margin-top:10px;">
+                        <button class="btn-admin">Thay ảnh minh chứng</button>
+                        <input type="file" accept="image/*" onchange="uploadEvidence(event, 'img-ex5')">
+                    </div>
+                </div>
+                <div class="admin-controls">
+                    <button class="btn-admin" onclick="openEditForm('ex5')"><i class="fas fa-edit"></i> Sửa Bài 5</button>
+                    <div id="form-ex5" class="edit-form">
+                        <input type="text" id="input-title-ex5" placeholder="Tiêu đề">
+                        <textarea id="input-desc-ex5" placeholder="Công cụ AI"></textarea>
+                        <textarea id="input-struct-ex5" placeholder="Sản phẩm tạo ra"></textarea>
+                        <textarea id="input-rule-ex5" placeholder="Đánh giá hiệu quả"></textarea>
+                        <button onclick="saveEx('ex5')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card exercise-card">
+                <h3 id="title-ex6">Bài 6 - Sử dụng AI có trách nhiệm</h3>
+                <div class="ex-item"><span>Nguyên tắc trách nhiệm:</span><p id="desc-ex6">Minh bạch nguồn gốc dữ liệu, tôn trọng bản quyền học thuật, tuyệt đối không đạo văn.</p></div>
+                <div class="ex-item"><span>Rủi ro khi lạm dụng:</span><p id="struct-ex6">Suy giảm khả năng tư duy độc lập, đối mặt tình trạng "ảo tưởng" (hallucination) thông tin sai lệch của AI.</p></div>
+                <div class="ex-item"><span>Bài học cá nhân:</span><p id="rule-ex6">Luôn coi AI là trợ lý đồng hành đắc lực, con người đóng vai trò kiểm chứng tối cao và đưa ra quyết định.</p></div>
+                <div class="evidence-box">
+                    <span>Ảnh minh chứng thực hiện</span>
+                    <img id="img-ex6" class="evidence-img" src="" alt="Minh chứng bài 6">
+                    <div class="admin-controls upload-btn-wrapper" style="margin-top:10px;">
+                        <button class="btn-admin">Thay ảnh minh chứng</button>
+                        <input type="file" accept="image/*" onchange="uploadEvidence(event, 'img-ex6')">
+                    </div>
+                </div>
+                <div class="admin-controls">
+                    <button class="btn-admin" onclick="openEditForm('ex6')"><i class="fas fa-edit"></i> Sửa Bài 6</button>
+                    <div id="form-ex6" class="edit-form">
+                        <input type="text" id="input-title-ex6" placeholder="Tiêu đề">
+                        <textarea id="input-desc-ex6" placeholder="Nguyên tắc"></textarea>
+                        <textarea id="input-struct-ex6" placeholder="Rủi ro"></textarea>
+                        <textarea id="input-rule-ex6" placeholder="Bài học cá nhân"></textarea>
+                        <button onclick="saveEx('ex6')">Lưu</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="cam-nhan" class="reveal">
+        <h2 class="section-title">Hành trình học tập và phát triển kỹ năng số</h2>
+        <div class="glass-card reflection-container">
+            <i class="fas fa-quote-left"></i>
+            <p id="txt-reflection">
+                Qua quá trình thực hiện các bài tập, em đã học được cách quản lý thông tin, tìm kiếm tài liệu học thuật, viết prompt hiệu quả và ứng dụng AI trong học tập. Những kiến thức và kỹ năng này giúp em nâng cao khả năng tự học, tư duy phản biện và làm việc nhóm. Em nhận thấy AI là công cụ hỗ trợ rất mạnh mẽ, tuy nhiên người học cần sử dụng một cách có trách nhiệm, kiểm chứng thông tin và không phụ thuộc hoàn toàn vào AI. Portfolio này đánh dấu sự tiến bộ của em trong việc phát triển kỹ năng số và chuẩn bị cho quá trình học tập cũng như nghề nghiệp trong tương lai.
+            </p>
+            <div class="admin-controls" style="margin-top: 25px;">
+                <button class="btn-admin" onclick="openEditForm('reflection')"><i class="fas fa-edit"></i> Chỉnh sửa phần cảm nhận</button>
+                <div id="form-reflection" class="edit-form">
+                    <textarea id="input-reflection" rows="6" placeholder="Nội dung cảm nhận"></textarea>
+                    <button onclick="saveReflection()">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="lien-he" class="reveal">
+        <h2 class="section-title">Thông tin liên hệ</h2>
+        <div class="contact-grid">
+            <div class="glass-card contact-card">
+                <i class="fas fa-user"></i>
+                <h4 style="color:var(--primary-gold); margin-bottom: 5px;">Họ và Tên</h4>
+                <p id="txt-contact-name">Nguyễn Văn A</p>
+            </div>
+            <div class="glass-card contact-card">
+                <i class="fas fa-envelope"></i>
+                <h4 style="color:var(--primary-gold); margin-bottom: 5px;">Email</h4>
+                <p><a href="mailto:sinhvien@example.com" id="txt-contact-email">sinhvien@example.com</a></p>
+            </div>
+            <div class="glass-card contact-card">
+                <i class="fas fa-phone"></i>
+                <h4 style="color:var(--primary-gold); margin-bottom: 5px;">Số điện thoại</h4>
+                <p id="txt-contact-phone">0123.456.789</p>
+            </div>
+            <div class="glass-card contact-card">
+                <i class="fab fa-facebook"></i>
+                <h4 style="color:var(--primary-gold); margin-bottom: 5px;">Facebook</h4>
+                <p><a href="#" target="_blank" id="txt-contact-fb">fb.com/sinhvien</a></p>
+            </div>
+            <div class="glass-card contact-card">
+                <i class="fab fa-github"></i>
+                <h4 style="color:var(--primary-gold); margin-bottom: 5px;">GitHub</h4>
+                <p><a href="#" target="_blank" id="txt-contact-git">github.com/sinhvien</a></p>
+            </div>
+        </div>
+        <div class="admin-controls" style="text-align: center; margin-top:30px;">
+            <button class="btn-admin" onclick="openEditForm('contact')"><i class="fas fa-edit"></i> Quản lý thông tin liên hệ</button>
+            <div id="form-contact" class="edit-form" style="max-width: 500px; margin: 10px auto; text-align: left;">
+                <input type="text" id="input-contact-name" placeholder="Họ tên">
+                <input type="email" id="input-contact-email" placeholder="Email">
+                <input type="text" id="input-contact-phone" placeholder="Số điện thoại">
+                <input type="text" id="input-contact-fb" placeholder="Link Facebook">
+                <input type="text" id="input-contact-git" placeholder="Link GitHub">
+                <button onclick="saveContact()">Lưu</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="admin" class="reveal">
+        <h2 class="section-title">Khu vực quản trị hệ thống</h2>
+        <div style="display: flex; justify-content:center;">
+            <div class="glass-card login-box" id="loginArea">
+                <i class="fas fa-lock" style="font-size: 2.5rem; color: var(--primary-gold); margin-bottom: 15px;"></i>
+                <h3 style="font-family: var(--font-title); margin-bottom: 10px;">Yêu cầu xác thực</h3>
+                <p style="font-size:0.85rem; color: var(--text-muted);">Nhập mật khẩu quản trị để mở khóa các tính năng thay đổi dữ liệu Portfolio.</p>
+                <input type="password" id="adminPassword" placeholder="Nhập mật khẩu quản trị...">
+                <button onclick="handleLogin()">ĐĂNG NHẬP HỆ THỐNG</button>
+            </div>
+            <div class="glass-card login-box" id="logoutArea" style="display: none;">
+                <i class="fas fa-unlock-alt" style="font-size: 2.5rem; color: var(--primary-gold); margin-bottom: 15px;"></i>
+                <h3 style="font-family: var(--font-title); margin-bottom: 10px;">Bạn đang là Admin</h3>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom:15px;">Mọi chức năng chỉnh sửa nhanh (inline-form) đã được kích hoạt trực tiếp ở các khu vực nội dung tương ứng.</p>
+                <button onclick="handleLogout()" style="background: linear-gradient(135deg, #a93226, #cd6155); color: white;">ĐĂNG XUẤT KHỎI HỆ THỐNG</button>
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+        /* Mật khẩu Admin mặc định của trang web */
+        const ADMIN_PASSWORD = "admin";
+
+        /* --- 1. HIỆU ỨNG HẠT LẤP LÁNH CHUYỂN ĐỘNG LIÊN TỤC (SPARKLES CANVAS) --- */
+        const canvas = document.getElementById('sparklesCanvas');
+        const ctx = canvas.getContext('2d');
+        let sparklesArray = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Sparkle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.6 + 0.2;
+                this.fadeRate = Math.random() * 0.01 + 0.005;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(214, 175, 55, ${this.opacity})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#d4af37';
+                ctx.fill();
+            }
+        }
+
+        function initSparkles() {
+            sparklesArray = [];
+            for (let i = 0; i < 80; i++) {
+                sparklesArray.push(new Sparkle());
+            }
+        }
+
+        function animateSparkles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            sparklesArray.forEach(sparkle => {
+                sparkle.update();
+                sparkle.draw();
+            });
+            requestAnimationFrame(animateSparkles);
+        }
+        initSparkles();
+        animateSparkles();
+
+
+        /* --- 2. CƠ CHẾ BẢO MẬT XÁC THỰC BẰNG LOCALSTORAGE --- */
+        function checkLoginStatus() {
+            const loginState = localStorage.getItem('isAdminLoggedIn');
+            const body = document.body;
+            const statusBtn = document.getElementById('adminStatusBtn');
+            const loginBox = document.getElementById('loginArea');
+            const logoutBox = document.getElementById('logoutArea');
+
+            if (loginState === 'true') {
+                body.classList.add('is-admin');
+                statusBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Đăng xuất';
+                statusBtn.href = '#admin';
+                statusBtn.onclick = function(e) { e.preventDefault(); handleLogout(); };
+                loginBox.style.display = 'none';
+                logoutBox.style.display = 'block';
+            } else {
+                body.classList.remove('is-admin');
+                statusBtn.innerHTML = 'Admin';
+                statusBtn.href = '#admin';
+                statusBtn.onclick = null;
+                loginBox.style.display = 'block';
+                logoutBox.style.display = 'none';
+                // Ẩn toàn bộ form khi thoát
+                document.querySelectorAll('.edit-form').forEach(f => f.style.display = 'none');
+            }
+        }
+
+        function handleLogin() {
+            const passInput = document.getElementById('adminPassword').value;
+            if (passInput === ADMIN_PASSWORD) {
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                alert('Đăng nhập quản trị thành công!');
+                document.getElementById('adminPassword').value = '';
+                checkLoginStatus();
+                window.location.hash = '#trang-chu'; // Quay lại trang chủ sau khi login
+            } else {
+                alert('Mật khẩu quản trị không chính xác! Quyền chỉnh sửa bị khóa.');
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('isAdminLoggedIn');
+            alert('Bạn đã đăng xuất khỏi chế độ quản trị.');
+            checkLoginStatus();
+            window.location.hash = '#trang-chu';
+        }
+
+
+        /* --- 3. ĐIỀU HƯỚNG & HIỆU ỨNG CUỘN (SCROLL/REVEAL) --- */
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('open');
+        }
+
+        const sections = document.querySelectorAll('section');
+        const navLi = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLi.forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current)) {
+                    a.classList.add('active');
+                }
+            });
+
+            // Hiệu ứng Fade In khi cuộn
+            document.querySelectorAll('.reveal').forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < window.innerHeight - 100) {
+                    el.classList.add('active');
+                }
+            });
+        });
+
+
+        /* --- 4. TỰ ĐỘNG LƯU & CẬP NHẬT NỘI DUNG QUA LOCALSTORAGE --- */
+        function openEditForm(id) {
+            const form = document.getElementById(`form-${id}`);
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+            
+            // Đổ dữ liệu hiện tại vào ô input đầu vào
+            if(id === 'hero') {
+                document.getElementById('input-student-name').value = document.getElementById('txt-student-name').innerText;
+                document.getElementById('input-site-title').value = document.getElementById('txt-site-title').innerText;
+                document.getElementById('input-hero-desc').value = document.getElementById('txt-hero-desc').innerText;
+            } else if(id === 'intro') {
+                document.getElementById('input-major').value = document.getElementById('txt-major').innerText;
+                document.getElementById('input-hobbies').value = document.getElementById('txt-hobbies').innerText;
+                document.getElementById('input-career').value = document.getElementById('txt-career').innerText;
+                document.getElementById('input-ai-target').value = document.getElementById('txt-ai-target').innerText;
+            } else if(id.startsWith('ex')) {
+                document.getElementById(`input-title-${id}`).value = document.getElementById(`title-${id}`).innerText;
+                document.getElementById(`input-desc-${id}`).value = document.getElementById(`desc-${id}`).innerText;
+                document.getElementById(`input-struct-${id}`).value = document.getElementById(`struct-${id}`).innerText;
+                document.getElementById(`input-rule-${id}`).value = document.getElementById(`rule-${id}`).innerText;
+            } else if(id === 'reflection') {
+                document.getElementById('input-reflection').value = document.getElementById('txt-reflection').innerText;
+            } else if(id === 'contact') {
+                document.getElementById('input-contact-name').value = document.getElementById('txt-contact-name').innerText;
+                document.getElementById('input-contact-email').value = document.getElementById('txt-contact-email').innerText;
+                document.getElementById('input-contact-phone').value = document.getElementById('txt-contact-phone').innerText;
+                document.getElementById('input-contact-fb').value = document.getElementById('txt-contact-fb').innerText;
+                document.getElementById('input-contact-git').value = document.getElementById('txt-contact-git').innerText;
+            }
+        }
+
+        // Các hàm lưu tự động cập nhật UI và đẩy vào localStorage
+        function saveHero() {
+            const name = document.getElementById('input-student-name').value;
+            const title = document.getElementById('input-site-title').value;
+            const desc = document.getElementById('input-hero-desc').value;
+            
+            document.getElementById('txt-student-name').innerText = name;
+            document.getElementById('txt-site-title').innerText = title;
+            document.getElementById('site-title-nav').innerText = title;
+            document.getElementById('txt-hero-desc').innerText = desc;
+
+            localStorage.setItem('pf_student_name', name);
+            localStorage.setItem('pf_site_title', title);
+            localStorage.setItem('pf_hero_desc', desc);
+            openEditForm('hero');
+        }
+
+        function saveIntro() {
+            const major = document.getElementById('input-major').value;
+            const hobbies = document.getElementById('input-hobbies').value;
+            const career = document.getElementById('input-career').value;
+            const target = document.getElementById('input-ai-target').value;
+
+            document.getElementById('txt-major').innerText = major;
+            document.getElementById('txt-hobbies').innerText = hobbies;
+            document.getElementById('txt-career').innerText = career;
+            document.getElementById('txt-ai-target').innerText = target;
+
+            localStorage.setItem('pf_major', major);
+            localStorage.setItem('pf_hobbies', hobbies);
+            localStorage.setItem('pf_career', career);
+            localStorage.setItem('pf_ai-target', target);
+            openEditForm('intro');
+        }
+
+        function saveEx(id) {
+            const title = document.getElementById(`input-title-${id}`).value;
+            const desc = document.getElementById(`input-desc-${id}`).value;
+            const struct = document.getElementById(`input-struct-${id}`).value;
+            const rule = document.getElementById(`input-rule-${id}`).value;
+
+            document.getElementById(`title-${id}`).innerText = title;
+            document.getElementById(`desc-${id}`).innerText = desc;
+            document.getElementById(`struct-${id}`).innerText = struct;
+            document.getElementById(`rule-${id}`).innerText = rule;
+
+            localStorage.setItem(`pf_title_${id}`, title);
+            localStorage.setItem(`pf_desc_${id}`, desc);
+            localStorage.setItem(`pf_struct_${id}`, struct);
+            localStorage.setItem(`pf_rule_${id}`, rule);
+            openEditForm(id);
+        }
+
+        function saveReflection() {
+            const text = document.getElementById('input-reflection').value;
+            document.getElementById('txt-reflection').innerText = text;
+            localStorage.setItem('pf_reflection', text);
+            openEditForm('reflection');
+        }
+
+        function saveContact() {
+            const name = document.getElementById('input-contact-name').value;
+            const email = document.getElementById('input-contact-email').value;
+            const phone = document.getElementById('input-contact-phone').value;
+            const fb = document.getElementById('input-contact-fb').value;
+            const git = document.getElementById('input-contact-git').value;
+
+            document.getElementById('txt-contact-name').innerText = name;
+            document.getElementById('txt-contact-email').innerText = email;
+            document.getElementById('txt-contact-email').href = "mailto:" + email;
+            document.getElementById('txt-contact-phone').innerText = phone;
+            document.getElementById('txt-contact-fb').innerText = fb;
+            document.getElementById('txt-contact-fb').href = fb;
+            document.getElementById('txt-contact-git').innerText = git;
+            document.getElementById('txt-contact-git').href = git;
+
+            localStorage.setItem('pf_c_name', name);
+            localStorage.setItem('pf_c_email', email);
+            localStorage.setItem('pf_c_phone', phone);
+            localStorage.setItem('pf_c_fb', fb);
+            localStorage.setItem('pf_c_git', git);
+            openEditForm('contact');
+        }
+
+        /* Xử lý upload ảnh minh chứng (chuyển đổi Base64 lưu cục bộ) */
+        function uploadEvidence(event, imgElementId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Url = e.target.result;
+                    const img = document.getElementById(imgElementId);
+                    img.src = base64Url;
+                    img.style.display = 'block';
+                    localStorage.setItem(`pf_img_${imgElementId}`, base64Url);
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /* Khôi phục toàn bộ dữ liệu đã chỉnh sửa từ LocalStorage khi tải trang */
+        function loadStoredData() {
+            if(localStorage.getItem('pf_student_name')) document.getElementById('txt-student-name').innerText = localStorage.getItem('pf_student_name');
+            if(localStorage.getItem('pf_site_title')) {
+                document.getElementById('txt-site-title').innerText = localStorage.getItem('pf_site_title');
+                document.getElementById('site-title-nav').innerText = localStorage.getItem('pf_site_title');
+            }
+            if(localStorage.getItem('pf_hero_desc')) document.getElementById('txt-hero-desc').innerText = localStorage.getItem('pf_hero_desc');
+            
+            if(localStorage.getItem('pf_major')) document.getElementById('txt-major').innerText = localStorage.getItem('pf_major');
+            if(localStorage.getItem('pf_hobbies')) document.getElementById('txt-hobbies').innerText = localStorage.getItem('pf_hobbies');
+            if(localStorage.getItem('pf_career')) document.getElementById('txt-career').innerText = localStorage.getItem('pf_career');
+            if(localStorage.getItem('pf_ai-target')) document.getElementById('txt-ai-target').innerText = localStorage.getItem('pf_ai-target');
+
+            // Khôi phục dữ liệu cho 6 bài tập
+            for(let i=1; i<=6; i++) {
+                if(localStorage.getItem(`pf_title_ex${i}`)) document.getElementById(`title-ex${i}`).innerText = localStorage.getItem(`pf_title_ex${i}`);
+                if(localStorage.getItem(`pf_desc_ex${i}`)) document.getElementById(`desc-ex${i}`).innerText = localStorage.getItem(`pf_desc_ex${i}`);
+                if(localStorage.getItem(`pf_struct_ex${i}`)) document.getElementById(`struct-ex${i}`).innerText = localStorage.getItem(`pf_struct_ex${i}`);
+                if(localStorage.getItem(`pf_rule_ex${i}`)) document.getElementById(`rule-ex${i}`).innerText = localStorage.getItem(`pf_rule_ex${i}`);
+                
+                // Khôi phục ảnh minh họa bài tập
+                const storedImg = localStorage.getItem(`pf_img_img-ex${i}`);
+                if(storedImg) {
+                    const img = document.getElementById(`img-ex${i}`);
+                    img.src = storedImg;
+                    img.style.display = 'block';
+                }
+            }
+
+            if(localStorage.getItem('pf_reflection')) document.getElementById('txt-reflection').innerText = localStorage.getItem('pf_reflection');
+
+            if(localStorage.getItem('pf_c_name')) document.getElementById('txt-contact-name').innerText = localStorage.getItem('pf_c_name');
+            if(localStorage.getItem('pf_c_email')) {
+                document.getElementById('txt-contact-email').innerText = localStorage.getItem('pf_c_email');
+                document.getElementById('txt-contact-email').href = "mailto:" + localStorage.getItem('pf_c_email');
+            }
+            if(localStorage.getItem('pf_c_phone')) document.getElementById('txt-contact-phone').innerText = localStorage.getItem('pf_c_phone');
+            if(localStorage.getItem('pf_c_fb')) {
+                document.getElementById('txt-contact-fb').innerText = localStorage.getItem('pf_c_fb');
+                document.getElementById('txt-contact-fb').href = localStorage.getItem('pf_c_fb');
+            }
+            if(localStorage.getItem('pf_c_git')) {
+                document.getElementById('txt-contact-git').innerText = localStorage.getItem('pf_c_git');
+                document.getElementById('txt-contact-git').href = localStorage.getItem('pf_c_git');
+            }
+        }
+
+        // Bắt đầu ứng dụng
+        window.onload = function() {
+            loadStoredData();
+            checkLoginStatus();
+        };
+
+        // Chuyển hướng ảo hỗ trợ đường dẫn /admin thông qua hash URL
+        window.addEventListener('hashchange', function() {
+            if(window.location.hash === '#admin') {
+                document.getElementById('admin').scrollIntoView();
+            }
+        });
+    </script>
+</body>
+</html>
